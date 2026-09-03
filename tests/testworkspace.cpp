@@ -1,4 +1,6 @@
 #include <cassert>
+#include <cstdio>
+#include <fstream>
 #include <iostream>
 #include <stdexcept>
 
@@ -20,8 +22,7 @@ void workspace_smoke_test() {
 }
 
 // Boundary/failure case: load() on a path that does not exist must
-// return false AND leave the Document's existing state completely
-// unchanged 
+// return false AND leave the Document's existing state completely unchanged
 void document_load_failure_preserves_state() {
     Document d("Original Title", "original contents");
     bool ok = d.load("this/path/does/not/exist.txt");
@@ -32,14 +33,27 @@ void document_load_failure_preserves_state() {
 }
 
 // Successful load: confirms title becomes the filename component,
-// sourcePath becomes the full path, and contents matches the file
+// sourcePath becomes the full path, and contents matches the file.
+// The test creates its own temp file at runtime (rather than relying on
+// text/sample.txt existing at a specific relative path) so it works
+// regardless of the working directory the test executable is run from.
 void document_load_success() {
+    const std::string tempPath = "m0_load_success_test.txt";
+    const std::string tempContents = "temporary content for load() test\n";
+
+    {
+        std::ofstream out(tempPath);
+        out << tempContents;
+    } // ofstream destructor closes/flushes the file here
+
     Document d;
-    bool ok = d.load("text/sample.txt");
+    bool ok = d.load(tempPath);
     assert(ok == true);
-    assert(d.title() == "sample.txt");
-    assert(d.sourcePath() == "text/sample.txt");
-    assert(!d.empty());
+    assert(d.title() == tempPath);       // no directory separator -> whole path is the filename
+    assert(d.sourcePath() == tempPath);
+    assert(d.contents() == tempContents);
+
+    std::remove(tempPath.c_str());  // clean up the temp file
 }
 
 // Equality/inequality: two Documents built from the same data compare
@@ -76,8 +90,7 @@ void workspace_insertion_order_test() {
     assert(w.documentAt(1).title() == "Second");
 }
 
-// Copy independence: copying a Workspace must
-// produce an independent value. Adding to the copy (or the original)
+// Copy independence: copying a Workspace must produce an independent value. Adding to the copy (or the original)
 // after the copy is made must not affect the other
 void workspace_copy_independence_test() {
     Workspace original("Original");
