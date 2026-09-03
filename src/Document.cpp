@@ -8,11 +8,10 @@
 
 
 
-Document::Document(std::string title, std::string contents) {
+Document::Document(std::string title, std::string contents)
     : title_(std::move(title)), contents_(std::move(contents)) {
         // std::move avoids making extra copies
         //title/contents are local copies inside the function
-    }
 }
 
 bool Document::operator==(const Document& other) const {
@@ -28,7 +27,7 @@ bool Document::operator!=(const Document& other) const {
 }
 
 bool Document::load(const std::string& path) {
-    std::ifstream file(path, std::ios::binanry); // open file
+    std::ifstream file(path, std::ios::binary); // open file
 
     if (!file.is_open()) {  // if load fails, contents remain untouched
         return false;
@@ -42,7 +41,7 @@ buffer << file.rdbuf();
 std::size_t lastSlash = path.find_last_of("/\\"); // have to include both in case linux/mac vs windows slash
 std::string filename = (lastSlash == std::string::npos)
     ? path // no slash found, then whole path is filename (? is another way for if else)
-    : path.substr(lastSlash + 1) // slash found, take everything after
+    : path.substr(lastSlash + 1); // slash found, take everything after
 
 // NOW, update object state (no failures)
 sourcePath_ = path;
@@ -58,7 +57,7 @@ const std::string& Document::title() const noexcept {
 }
 
 const std::string& Document::sourcePath() const noexcept {
-    return SourcePath_;
+    return sourcePath_;
 
 }
 
@@ -86,4 +85,3 @@ bool Document::empty() const noexcept {
 // - load() reads into LOCAL variables (file, bugger, filename) before
 // touching anything. This gaurentees failure leaves the doc unchanged
 // all string parameters are taken by value and moved into members
-//

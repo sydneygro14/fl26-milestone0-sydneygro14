@@ -19,14 +19,15 @@ bool Workspace::operator==(const Workspace& other) const {
     // std::vector::operator== first compares this->size() to other.size();
     // if they differ, it returns false immediately (O(1), no elements touched
     // If sizes match, it compares element[0] to element[0], etc. in that exact index order, calling THAT element  type's own operator== each time
-
+}
 
 
 bool Workspace::operator!=(const Workspace& other) const {
     return !(*this == other);  // negates operator=='s result
 }
 
-const std::string& Workspace::name() const noexcept { return name_; }  // reference to name_, zero-copy
+const std::string& Workspace::name() const noexcept { 
+    return name_; }  // reference to name_, zero-copy
 
 void Workspace::setName(std::string name) {
     name_ = std::move(name);  // name_'s old buffer released and name's buffer pointer moved in

@@ -22,3 +22,5 @@ target_link_libraries(testworkspace PRIVATE aiworkspace)
 
 enable_testing()
 add_test(NAME testworkspace COMMAND testworkspace)
+set_tests_properties(testworkspace PROPERTIES WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+
