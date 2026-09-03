@@ -3,6 +3,11 @@
 #include <sstream> // needed for buffering file contents
 
 
+// this code's function is to hold a display title, the filesystem path, and its raw
+// text contents and if reading the file fails, the document remains unchanged
+
+
+
 Document::Document(std::string title, std::string contents) {
     : title_(std::move(title)), contents_(std::move(contents)) {
         // std::move avoids making extra copies
@@ -48,31 +53,37 @@ return true;
 }
 
 const std::string& Document::title() const noexcept {
-    // TODO
+    return title_;
 
 }
 
 const std::string& Document::sourcePath() const noexcept {
-    // TODO
+    return SourcePath_;
 
 }
 
 const std::string& Document::contents() const noexcept {
-    // TODO
+    return contents_;
   
 }
 
 void Document::setTitle(std::string title) {
-    
+    title_ = std::move(title); // move, avoid extra copy
   
 }
 
 std::size_t Document::characterCount() const noexcept {
-    // TODO
+    return contents_.size(); // 0(1), std:: string tracks its own lenght
     
 }
 
 bool Document::empty() const noexcept {
-    // TODO
-   
+    return contents_.empty();
+ // defined purely by contents as the spec says to   
 }
+
+
+// - load() reads into LOCAL variables (file, bugger, filename) before
+// touching anything. This gaurentees failure leaves the doc unchanged
+// all string parameters are taken by value and moved into members
+//
